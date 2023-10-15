@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 function SignInForm() {
   const [state, setState] = useState({
@@ -8,7 +9,8 @@ function SignInForm() {
     password: ""
   });
   const [responseMessage, setResponseMessage] = useState("");
-
+  const navigate = useNavigate("");
+  
   const handleChange = (evt) => {
     const { name, value } = evt.target;
     setState({
@@ -33,13 +35,13 @@ function SignInForm() {
       .then((response) => {
         // Handle the response data here
         const responseData = response.data;
+        Cookies.set('authToken', responseData.token, { expires: 7 });
         if (responseData.message === "incorrect password") {
           setResponseMessage("Incorrect password. Please try again.");
         } else if (responseData.message === "user does not exist") {
           setResponseMessage("User does not exist. Please sign up.");
         } else {
-        //   <Link to="/home"></Link>
-          console.log(responseData);
+          navigate("/home")
           setResponseMessage("Sign in successful.");
         }
       })
@@ -82,14 +84,12 @@ function SignInForm() {
         <a href="#" className="text-[#333] text-[14px] mt-[15px] mb-[15px]">
           Forgot your password?
         </a>
-        <Link to="/home">
             <button
             type="submit"
             className="rounded-[20px] border border-solid border-[#ff4b2b] bg-[#ff4b2b] text-[#fff] font-bold text-[12px] uppercase py-[12px] px-[45px] tracking-wider transform transition-transform duration-80 ease-in"
             >
             Sign In
             </button>
-        </Link>
         {responseMessage && <p className="text-red-500 mt-2">{responseMessage}</p>}
       </form>
     </div>

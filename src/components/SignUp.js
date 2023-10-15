@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function SignUpForm() {
   const [state, setState] = useState({
@@ -10,6 +10,10 @@ function SignUpForm() {
     password: ""
   });
   const [responseMessage, setResponseMessage] = useState("");
+  // const [redirectToHome, setredirectToHome] = useState(false);
+
+  const navigate = useNavigate("");
+
 
   const handleChange = (evt) => {
     const { name, value } = evt.target;
@@ -43,10 +47,15 @@ function SignUpForm() {
         const responseData = response.data;
         if (responseData.message === "User created successfully") {
           setResponseMessage(responseData.message);
-        } else {
+          // setredirectToHome(true);
+          // browserHistory.push("/home")
+          navigate("/home")
+        } 
+        else {
           setResponseMessage(responseData.message);
         }
       })
+
       .catch((error) => {
         if (error.response) {
           console.log(error.response.data);
@@ -63,6 +72,10 @@ function SignUpForm() {
       password: ""
     });
   };
+
+  // if(redirectToHome) {
+  //   <Link to="/home"></Link>
+  // }
 
   return (
     <div className="form-container sign-up-container">
@@ -100,14 +113,15 @@ function SignUpForm() {
           placeholder="Password"
           className="border-none px-[15px] py-[12px] my-[8px] w-full bg-[#eee]"
         />
-        <Link to="/home">
+          <Link to="/home">
             <button
             type="submit"
             className="rounded-[20px] border border-solid border-[#ff4b2b] bg-[#ff4b2b] text-[#fff] font-bold text-[12px] uppercase py-[12px] px-[45px] tracking-wider transform transition-transform duration-80 ease-in"
+            onClick={handleOnSubmit}
             >
             Sign Up
             </button>
-        </Link>
+          </Link>
         {responseMessage && <p className="text-red-500 mt-2">{responseMessage}</p>}
       </form>
     </div>
